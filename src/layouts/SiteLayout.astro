@@ -1,0 +1,36 @@
+---
+import '../styles/global.css';
+import SiteHeader from '../components/SiteHeader.astro';
+import SiteFooter from '../components/SiteFooter.astro';
+import { withBase } from '../utils/paths';
+
+interface Props {
+  title: string;
+  description: string;
+  home?: boolean;
+}
+
+const { title, description, home = false } = Astro.props;
+const fullTitle = home ? '暮色存檔｜Visual Novel Journal' : `${title}｜暮色存檔`;
+---
+
+<!doctype html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#15101f" />
+    <meta name="description" content={description} />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <link rel="icon" type="image/svg+xml" href={withBase('/favicon.svg')} />
+    <title>{fullTitle}</title>
+  </head>
+  <body class:list={[home ? 'site-body site-body--home' : 'site-body']}>
+    <a class="skip-link" href="#main-content">跳至主要內容</a>
+    {!home && <SiteHeader />}
+    <slot />
+    {!home && <SiteFooter />}
+  </body>
+</html>

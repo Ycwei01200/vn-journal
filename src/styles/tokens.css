@@ -1,0 +1,16 @@
+:root {
+  color-scheme: dark;
+  --ink-950: #100d18;
+  --ink-900: #171322;
+  --ink-850: #20192c;
+  --ink-800: #2d2238;
+  --paper-100: #f8f0eb;
+  --paper-200: #ead9d7;
+  --paper-300: #c8b6bf;
+  --paper-400: #aa99a8;
+  --paper-500: #877789;
+  --gold-200: #f1c29f;
+  --gold-300: #dba98d;
+  --font-serif: 'Iowan Old Style', 'Noto Serif TC', 'Songti TC', Georgia, serif;
+  --font-sans: 'Noto Sans TC', 'PingFang TC', 'Microsoft JhengHei', sans-serif;
+}

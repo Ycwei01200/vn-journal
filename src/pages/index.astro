@@ -1,0 +1,79 @@
+---
+import SiteLayout from '../layouts/SiteLayout.astro';
+import { withBase } from '../utils/paths';
+import '../styles/home.css';
+---
+
+<SiteLayout
+  home
+  title="暮色存檔"
+  description="以視覺小說為中心，收錄無劇透評論與遊玩記錄。"
+>
+  <main id="main-content" class="title-screen" data-title-screen>
+    <img class="title-screen__scene" src={withBase('/scenes/sunset-horizon.svg')} alt="" aria-hidden="true" />
+    <div class="title-screen__veil" aria-hidden="true"></div>
+    <div class="title-screen__grain" aria-hidden="true"></div>
+
+    <div class="title-screen__topline">
+      <span>Independent Visual Novel Journal</span>
+      <span>記下故事抵達心裡的時刻</span>
+    </div>
+
+    <div class="title-screen__title">
+      <p>AN ARCHIVE OF QUIET STORIES</p>
+      <h1>暮色存檔</h1>
+      <p class="title-screen__roman">THE LAST LIGHT JOURNAL</p>
+    </div>
+
+    <p class="title-screen__hint">↑ ↓ 選擇　・　Enter 前往</p>
+    <div class="title-screen__bottom">
+      <p class="title-screen__caption">天色暗下以前，先把故事留在這裡。</p>
+      <nav class="title-menu" aria-label="Title menu" data-title-menu>
+        <a class="title-menu__item" data-menu-item href={withBase('/reviews/')}>
+          <span>START</span><small>開始閱讀</small>
+        </a>
+        <a class="title-menu__item" data-menu-item href={withBase('/play-log/')}>
+          <span>RECORD</span><small>遊玩記錄</small>
+        </a>
+        <a class="title-menu__item" data-menu-item href={withBase('/about/')}>
+          <span>ABOUT</span><small>關於手帖</small>
+        </a>
+      </nav>
+    </div>
+    <div class="transition-wash" aria-hidden="true"></div>
+  </main>
+
+  <script>
+    const titleScreen = document.querySelector<HTMLElement>('[data-title-screen]');
+    const menu = titleScreen?.querySelector<HTMLElement>('[data-title-menu]');
+    const items = [...(menu?.querySelectorAll<HTMLAnchorElement>('[data-menu-item]') ?? [])];
+
+    menu?.addEventListener('keydown', (event) => {
+      if (items.length === 0) return;
+      const current = items.indexOf(document.activeElement as HTMLAnchorElement);
+      let next = current;
+
+      if (event.key === 'ArrowDown' || event.key === 'ArrowRight') next = (current + 1) % items.length;
+      if (event.key === 'ArrowUp' || event.key === 'ArrowLeft') next = (current - 1 + items.length) % items.length;
+      if (event.key === 'Home') next = 0;
+      if (event.key === 'End') next = items.length - 1;
+
+      if (next !== current) {
+        event.preventDefault();
+        items[next].focus();
+      }
+    });
+
+    for (const item of items) {
+      item.addEventListener('click', (event) => {
+        const mouseEvent = event as MouseEvent;
+        if (mouseEvent.button !== 0 || mouseEvent.metaKey || mouseEvent.ctrlKey || mouseEvent.shiftKey || mouseEvent.altKey) return;
+        event.preventDefault();
+        if (!titleScreen) return;
+        titleScreen.dataset.leaving = 'true';
+        const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        window.setTimeout(() => window.location.assign(item.href), reduceMotion ? 0 : 240);
+      });
+    }
+  </script>
+</SiteLayout>

@@ -1,0 +1,20 @@
+{
+  "name": "vn-journal",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "smoke": "node scripts/smoke.mjs",
+    "verify": "npm run build && npm run smoke"
+  },
+  "dependencies": {
+    "astro": "^7.3.0",
+    "marked": "^17.0.0"
+  }
+}

@@ -1,0 +1,40 @@
+---
+import SiteLayout from '../layouts/SiteLayout.astro';
+import { withBase } from '../utils/paths';
+---
+
+<SiteLayout title="關於這份手帖" description="暮色存檔的內容說明與 Markdown 範本入口。">
+  <main id="main-content" class="reader-page about-page">
+    <div class="section-kicker">FILE 03　／　ABOUT</div>
+    <header class="page-lede">
+      <p class="eyebrow">A SMALL PLACE FOR STORIES</p>
+      <h1>關於這份手帖</h1>
+      <p>暮色存檔是一份以視覺小說與文字冒險為主的私人閱讀手帖。評論與遊玩記錄會以 Markdown 編寫，再由靜態網站呈現。</p>
+    </header>
+
+    <section class="about-copy" aria-label="編輯原則">
+      <h2>先讓讀者安心閱讀</h2>
+      <p>評論索引只使用標題、作品名稱、日期與無劇透摘要。劇情分析由讀者主動展開後才會顯示；發佈時請勿把關鍵情節放進標題、摘要、畫格說明或檔名。</p>
+      <h2>由作者提供實際心得</h2>
+      <p>目前的評論與遊玩記錄都是空白範本，沒有代填評價或遊玩經驗。複製範本後，請以自己的遊玩內容替換提示文字，再將狀態改成 <code>published</code>。</p>
+    </section>
+
+    <nav class="about-grid" aria-label="查看空白版型預覽">
+      <a class="preview-link" href={withBase('/reviews/review-template/')}>
+        <small>REVIEW · TEMPLATE</small>
+        <span>評論版型預覽</span>
+      </a>
+      <a class="preview-link" href={withBase('/play-log/play-log-template/')}>
+        <small>PLAY LOG · TEMPLATE</small>
+        <span>遊玩記錄版型預覽</span>
+      </a>
+    </nav>
+  </main>
+</SiteLayout>
+
+<style>
+  .about-copy { max-width: 720px; color: var(--paper-300); }
+  .about-copy h2 { margin: 2.5rem 0 0.5rem; color: var(--paper-100); font-family: var(--font-serif); font-size: 1.24rem; font-weight: 400; letter-spacing: 0.08em; }
+  .about-copy p { margin: 0; line-height: 2; }
+  .about-copy code { color: var(--gold-200); font-size: 0.9em; }
+</style>

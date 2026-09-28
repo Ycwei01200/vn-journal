@@ -1,0 +1,52 @@
+---
+import { getCollection } from 'astro:content';
+import SiteLayout from '../../layouts/SiteLayout.astro';
+import { withBase } from '../../utils/paths';
+
+const reviews = (await getCollection('reviews', ({ data }) => data.status === 'published'))
+  .sort((a, b) => (b.data.date?.valueOf() ?? 0) - (a.data.date?.valueOf() ?? 0));
+---
+
+<SiteLayout title="遊戲評論" description="視覺小說與文字冒險作品的評論索引；摘要不含劇情轉折。">
+  <main id="main-content" class="reader-page">
+    <div class="section-kicker">FILE 01　／　REVIEWS</div>
+    <header class="page-lede">
+      <p class="eyebrow">STORIES, READ SLOWLY</p>
+      <h1>遊戲評論</h1>
+      <p>從文字、畫面與餘韻出發的閱讀手帖。索引摘要只談整體感受，不揭露劇情轉折。</p>
+    </header>
+
+    <section aria-label="評論索引" class="review-index">
+      {reviews.length > 0 ? (
+        <div class="review-cards">
+          {reviews.map((review) => (
+            <article class="review-card">
+              <p class="eyebrow">{review.data.date?.toLocaleDateString('zh-TW') ?? '未註明日期'}</p>
+              <h2><a href={withBase(`/reviews/${review.id}/`)}>{review.data.title}</a></h2>
+              <p class="review-card__work">{review.data.gameTitle}</p>
+              <p>{review.data.spoilerFreeSummary}</p>
+              <a class="text-link" href={withBase(`/reviews/${review.id}/`)}>閱讀評論</a>
+            </article>
+          ))}
+        </div>
+      ) : (
+        <div class="empty-state">
+          <span class="empty-state__mark" aria-hidden="true">∿</span>
+          <p class="eyebrow">FILE 00 · WAITING FOR A STORY</p>
+          <h2>評論尚未刊出</h2>
+          <p>這裡會收錄無劇透摘要與完整評論。作品資訊與心得尚未填入，因此目前沒有公開評論。</p>
+          <a class="text-link" href={withBase('/about/')}>查看評論版型與寫作方式</a>
+        </div>
+      )}
+    </section>
+  </main>
+</SiteLayout>
+
+<style>
+  .review-cards { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.25rem; }
+  .review-card { padding: 1.6rem; border: 1px solid rgba(213, 182, 204, 0.2); background: rgba(255,255,255,0.025); }
+  .review-card h2 { margin: 0.45rem 0 0; font-family: var(--font-serif); font-size: 1.5rem; font-weight: 400; letter-spacing: 0.05em; }
+  .review-card__work { margin: 0.15rem 0 1rem; color: var(--gold-300); font-size: 0.8rem; }
+  .review-card > p:not(.eyebrow):not(.review-card__work) { color: var(--paper-300); }
+  @media (max-width: 700px) { .review-cards { grid-template-columns: 1fr; } }
+</style>

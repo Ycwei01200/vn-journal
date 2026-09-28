@@ -1,0 +1,116 @@
+---
+import { getCollection, render } from 'astro:content';
+import { marked } from 'marked';
+import SiteLayout from '../../layouts/SiteLayout.astro';
+import { withBase } from '../../utils/paths';
+
+export async function getStaticPaths() {
+  const entries = await getCollection('reviews', ({ data }) => data.status === 'published' || data.status === 'template');
+  return Promise.all(entries.map(async (entry) => ({
+    params: { slug: entry.id },
+    props: { entry, rendered: await render(entry) },
+  })));
+}
+
+const { entry, rendered } = Astro.props;
+const { Content } = rendered;
+const spoilerHtml = await marked.parse(entry.data.spoilerContent);
+const frames = entry.data.frames;
+const dateLabel = entry.data.date?.toLocaleDateString('zh-TW', { year: 'numeric', month: 'long', day: 'numeric' }) ?? '日期留白';
+const isTemplate = entry.data.status === 'template';
+---
+
+<SiteLayout title={entry.data.title} description={entry.data.spoilerFreeSummary}>
+  {isTemplate && <p class="template-ribbon"><strong>範本預覽</strong>｜此頁只展示版型，不包含任何作品評價。撰寫前請複製範本並替換所有提示文字。</p>}
+  <main id="main-content" class="review-reading-page">
+    <article class="review-frame">
+      <aside class="vertical-rail" aria-label="評論資訊">
+        <span>讀後手帖</span>
+        <span class="vertical-rail__rule" aria-hidden="true"></span>
+        <span>{dateLabel}</span>
+        <span>FILE / {entry.id}</span>
+      </aside>
+
+      <div class="review-column">
+        <header class="review-lead-window">
+          <p class="eyebrow">VISUAL NOVEL · REVIEW</p>
+          <h1>{entry.data.title}</h1>
+          <p class="review-lead-window__work">{entry.data.gameTitle}</p>
+          <p class="review-lead-window__summary">{entry.data.spoilerFreeSummary}</p>
+          <div class="review-meta">
+            <span>{dateLabel}</span>
+            {entry.data.platforms.length > 0 && <span>{entry.data.platforms.join('　/　')}</span>}
+            {entry.data.rating !== undefined && entry.data.rating !== null && <span>評分　{entry.data.rating.toFixed(1)} / 10</span>}
+          </div>
+        </header>
+
+        {frames.length > 0 && (
+          <section class="story-frames" aria-label="故事畫格示意">
+            {frames.map((frame, index) => (
+              <figure>
+                <img src={withBase(frame.image)} alt={frame.alt} loading="lazy" />
+                <figcaption><span>SCENE {String(index + 1).padStart(2, '0')}</span>{frame.caption}</figcaption>
+              </figure>
+            ))}
+          </section>
+        )}
+
+        <div class="review-prose">
+          <p class="prose-marker">NO-SPOILER NOTES <span>無劇透感想</span></p>
+          <div class="prose-body"><Content /></div>
+        </div>
+
+        {entry.data.spoilerContent.trim() && (
+          <details class="spoiler-disclosure">
+            <summary>展開劇情分析　／　以下含劇情資訊</summary>
+            <div class="spoiler-prose" set:html={spoilerHtml}></div>
+          </details>
+        )}
+
+        <nav class="review-return" aria-label="評論頁導覽">
+          <a href={withBase('/reviews/')}>← 返回評論索引</a>
+          <a href={withBase('/')}>回到標題畫面</a>
+        </nav>
+      </div>
+    </article>
+  </main>
+</SiteLayout>
+
+<style>
+  .review-reading-page { width: min(100% - 3rem, 1240px); margin: 0 auto; padding: clamp(2rem, 5vw, 4.25rem) 0 clamp(4rem, 8vw, 7rem); }
+  .review-frame { display: grid; grid-template-columns: 4.5rem minmax(0, 1fr); border: 1px solid rgba(225, 194, 220, 0.34); outline: 1px solid rgba(225, 194, 220, 0.1); outline-offset: 6px; background: linear-gradient(140deg, rgba(51, 39, 66, 0.72), rgba(21, 16, 31, 0.91) 42%); box-shadow: 0 28px 90px rgba(0, 0, 0, 0.34); }
+  .vertical-rail { display: flex; align-items: center; justify-content: flex-start; gap: 1.2rem; padding: 1.5rem 0.9rem; border-right: 1px solid rgba(225, 194, 220, 0.2); color: var(--paper-400); font-family: var(--font-serif); font-size: 0.73rem; letter-spacing: 0.18em; writing-mode: vertical-rl; text-orientation: mixed; }
+  .vertical-rail span:first-child { color: var(--gold-200); }
+  .vertical-rail__rule { width: 1px; height: 2.5rem; background: rgba(225, 194, 220, 0.35); }
+  .review-column { min-width: 0; padding: clamp(1.25rem, 4vw, 3.6rem); writing-mode: horizontal-tb; }
+  .review-lead-window { position: relative; overflow: hidden; padding: clamp(1.6rem, 5vw, 3.5rem); border: 1px solid rgba(247, 218, 218, 0.3); background: linear-gradient(115deg, rgba(66, 47, 77, 0.82), rgba(100, 61, 78, 0.45) 60%, rgba(40, 29, 53, 0.7)); }
+  .review-lead-window::after { position: absolute; top: -7rem; right: -3rem; width: 19rem; height: 19rem; border: 1px solid rgba(248, 220, 206, 0.1); border-radius: 50%; box-shadow: 0 0 0 1.6rem rgba(248,220,206,0.025), 0 0 0 3.2rem rgba(248,220,206,0.02); content: ''; pointer-events: none; }
+  .review-lead-window h1 { position: relative; z-index: 1; margin: 0.35rem 0 0.15rem; color: var(--paper-100); font-family: var(--font-serif); font-size: clamp(1.8rem, 5vw, 3.3rem); font-weight: 400; letter-spacing: 0.1em; line-height: 1.35; }
+  .review-lead-window__work { margin: 0; color: var(--gold-200); font-family: var(--font-serif); font-size: 1.03rem; letter-spacing: 0.1em; }
+  .review-lead-window__summary { position: relative; z-index: 1; max-width: 47rem; margin: 1.55rem 0 0; color: #f0e2e3; font-size: 1.03rem; line-height: 2; }
+  .review-meta { display: flex; flex-wrap: wrap; gap: 0.5rem 1.2rem; margin-top: 1.55rem; color: var(--paper-400); font-size: 0.69rem; letter-spacing: 0.08em; }
+  .story-frames { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.8rem; margin: 1.3rem 0 3.1rem; }
+  .story-frames figure { min-width: 0; margin: 0; padding: 0.45rem; border: 1px solid rgba(225, 194, 220, 0.22); background: rgba(11, 9, 17, 0.62); }
+  .story-frames img { display: block; width: 100%; aspect-ratio: 16 / 9; object-fit: cover; filter: saturate(0.8); }
+  .story-frames figcaption { display: flex; justify-content: space-between; gap: 0.5rem; padding: 0.55rem 0.25rem 0.2rem; color: var(--paper-300); font-size: 0.66rem; letter-spacing: 0.08em; }
+  .story-frames figcaption span { color: var(--gold-300); font-size: 0.56rem; letter-spacing: 0.14em; }
+  .review-prose { max-width: 49rem; margin-inline: auto; }
+  .prose-marker { display: flex; align-items: center; gap: 0.85rem; margin: 0 0 1.25rem; color: var(--gold-300); font-size: 0.63rem; letter-spacing: 0.18em; }
+  .prose-marker span { color: var(--paper-500); }
+  .prose-body, .prose-body * { writing-mode: horizontal-tb; text-orientation: mixed; }
+  .prose-body { color: var(--paper-200); font-family: var(--font-serif); font-size: 1.06rem; line-height: 2.15; overflow-wrap: anywhere; }
+  .prose-body h2, .spoiler-prose h2 { margin: 2.6rem 0 0.85rem; color: var(--paper-100); font-size: 1.4rem; font-weight: 400; letter-spacing: 0.08em; }
+  .prose-body p { margin: 0 0 1.45rem; }
+  .prose-body blockquote { margin: 2rem 0; padding: 0.2rem 0 0.2rem 1.2rem; border-left: 1px solid var(--gold-300); color: var(--gold-200); }
+  .spoiler-disclosure { max-width: 49rem; margin: 2.5rem auto 0; border: 1px solid rgba(219, 169, 141, 0.48); background: rgba(176, 115, 107, 0.08); }
+  .spoiler-disclosure summary { padding: 1rem 1.2rem; color: var(--gold-200); cursor: pointer; font-size: 0.78rem; letter-spacing: 0.11em; list-style: none; }
+  .spoiler-disclosure summary::-webkit-details-marker { display: none; }
+  .spoiler-disclosure summary::before { display: inline-block; width: 1.5em; color: var(--paper-300); content: '＋'; }
+  .spoiler-disclosure[open] summary::before { content: '－'; }
+  .spoiler-prose { padding: 0.25rem 1.25rem 1.35rem; border-top: 1px solid rgba(219, 169, 141, 0.22); color: var(--paper-200); font-family: var(--font-serif); line-height: 2; overflow-wrap: anywhere; }
+  .spoiler-prose p { margin: 1rem 0; }
+  .spoiler-prose h2 { font-size: 1.2rem; }
+  .review-return { display: flex; justify-content: space-between; gap: 1rem; margin: 3rem auto 0; padding-top: 1.3rem; border-top: 1px solid rgba(225, 194, 220, 0.17); color: var(--paper-400); font-size: 0.74rem; letter-spacing: 0.06em; }
+  .review-return a { text-decoration: none; }
+  @media (max-width: 700px) { .review-reading-page { width: min(100% - 2rem, 1240px); } .review-frame { grid-template-columns: 1fr; } .vertical-rail { min-height: 46px; flex-direction: row; justify-content: flex-start; gap: 0.7rem; padding: 0.55rem 0.9rem; border-right: 0; border-bottom: 1px solid rgba(225, 194, 220, 0.2); font-size: 0.64rem; writing-mode: horizontal-tb; } .vertical-rail__rule { width: 1.5rem; height: 1px; } .review-column { padding: 1rem; } .story-frames { gap: 0.45rem; margin-bottom: 2.2rem; } .story-frames figure { padding: 0.25rem; } .story-frames figcaption { flex-direction: column; gap: 0.1rem; font-size: 0.58rem; } .story-frames figcaption span { font-size: 0.5rem; } .review-lead-window { padding: 1.35rem; } .review-lead-window__summary { font-size: 0.96rem; } .prose-body { font-size: 1rem; line-height: 2; } .review-return { flex-direction: column; align-items: flex-start; } }
+</style>
