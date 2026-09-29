@@ -28,14 +28,14 @@
 .title-screen__scene {
   object-fit: cover;
   object-position: center 52%;
-  filter: saturate(0.92) brightness(0.87);
+  filter: saturate(0.98) brightness(0.93);
 }
 
 .title-screen__veil {
   z-index: -1;
   background:
-    linear-gradient(90deg, rgba(17, 11, 28, 0.7) 0%, rgba(24, 13, 32, 0.23) 48%, rgba(15, 12, 26, 0.16) 100%),
-    linear-gradient(0deg, rgba(17, 11, 25, 0.76) 0%, rgba(17, 11, 25, 0.13) 38%, rgba(17, 11, 25, 0.16) 100%);
+    linear-gradient(90deg, rgba(17, 11, 28, 0.46) 0%, rgba(24, 13, 32, 0.18) 48%, rgba(15, 12, 26, 0.12) 100%),
+    linear-gradient(0deg, rgba(17, 11, 25, 0.62) 0%, rgba(17, 11, 25, 0.08) 38%, rgba(17, 11, 25, 0.1) 100%);
 }
 
 .title-screen__grain {
