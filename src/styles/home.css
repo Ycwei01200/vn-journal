@@ -81,10 +81,10 @@
   margin: 0;
   color: #fff4ec;
   font-family: var(--font-serif);
-  font-size: clamp(3.8rem, 9.2vw, 7.6rem);
+  font-size: clamp(3rem, 7.2vw, 7rem);
   font-weight: 400;
-  letter-spacing: 0.14em;
-  line-height: 1.1;
+  letter-spacing: 0.05em;
+  line-height: 1.05;
 }
 
 .title-screen__title .title-screen__roman {
@@ -224,8 +224,8 @@
   }
 
   .title-screen__title h1 {
-    font-size: clamp(3.7rem, 17vw, 6rem);
-    letter-spacing: 0.1em;
+    font-size: clamp(1.55rem, 8.2vw, 3.3rem);
+    letter-spacing: 0.025em;
   }
 
   .title-screen__title .title-screen__roman {

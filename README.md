@@ -1,4 +1,4 @@
-# 暮色存檔｜Visual Novel Journal
+# TWILIGHT ARCHIVE｜Visual Novel Journal
 
 以視覺小說與文字冒險為中心的靜態閱讀手帖。首頁背景是為本專案生成的原創暮色雲海插畫（OpenAI ImageGen）；評論畫格與 favicon 則為原創 SVG。站內沒有外部字型、取材圖片、角色圖或授權不明素材。
 
@@ -37,4 +37,4 @@ npm run verify
 
 ## 發佈到 GitHub Pages
 
-Astro 已將網站根目錄設為 `/vn-journal/`，部署網域為 `https://ycwei01200.github.io`。`.github/workflows/deploy.yml` 會在 `main` 分支更新或手動啟動時建置並部署 Pages。首次啟用時，請在 GitHub 專案的 Pages 設定選擇 **GitHub Actions** 作為來源。
+Astro 已將網站根目錄設為 `/vn-journal/`，部署網域為 `https://ycwei01200.github.io`。GitHub Pages 來源目前已設定為 **GitHub Actions**；`.github/workflows/deploy.yml` 會在 `main` 分支更新或手動啟動時建置並部署 Pages。

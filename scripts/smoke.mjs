@@ -20,6 +20,10 @@ const reviewTemplate = readRoute('reviews/review-template');
 const playLogTemplate = readRoute('play-log/play-log-template');
 
 assert.match(home, /<html[^>]+lang="zh-Hant"/);
+assert.match(home, /<h1>TWILIGHT ARCHIVE<\/h1>/, 'Homepage title should use the requested English wordmark');
+assert.match(home, /<title>TWILIGHT ARCHIVE｜Visual Novel Journal<\/title>/, 'Homepage document title should match its wordmark');
+assert.match(home, /property="og:title" content="TWILIGHT ARCHIVE｜Visual Novel Journal"/, 'Homepage social title should match its wordmark');
+assert.ok(home.includes('鳥於天空 魚於海洋 你於彼方'), 'Homepage caption should use the requested exact copy');
 for (const label of ['START', 'RECORD', 'ABOUT']) {
   assert.match(home, new RegExp(`>${label}<`), `Title menu is missing ${label}`);
 }
@@ -29,6 +33,7 @@ for (const href of ['/vn-journal/reviews/', '/vn-journal/play-log/', '/vn-journa
 assert.match(home, /aria-label="(?:Title|標題).{0,20}(?:menu|選單)"/i);
 
 assert.match(reviews, /遊戲評論|評論索引/);
+assert.match(reviews, /<title>遊戲評論｜TWILIGHT ARCHIVE<\/title>/, 'Interior page document title should use the updated site brand');
 assert.match(reviews, /尚未刊出/);
 assert.ok(!reviews.includes('此處填入含劇情的文字'), 'Review index leaked the spoiler template text');
 assert.ok(!reviews.includes('review-template'), 'Review index exposed the unlisted template route');
